@@ -1,0 +1,23 @@
+{
+  "name": "guestbook",
+  "version": "1.0.0",
+  "description": "self hostable guestbook",
+  "main": "src/index.js",
+  "repository": "git@github.com:clagabos/guestbook.git",
+  "author": "github.com/clagabos",
+  "license": "see LICENSE",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "chalk": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "mysql2": "^2.3.3",
+    "pug": "^3.0.2"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  }
+}

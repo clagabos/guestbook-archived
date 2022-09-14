@@ -1,0 +1,47 @@
+mixin entry(entry)
+    section.entry
+        p(aria-label=`Entry number ${entry.id}`).entry_index #{new Date(entry.date).toLocaleDateString()} #{new Date(entry.date).toLocaleTimeString()} [Entry #{entry.id}]
+        h2.entry_header= entry.name
+        p.entry_message= entry.message
+
+doctype html
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(name='viewport' content='width=device-width, initial-scale=1')
+        link(rel='icon' href='/assets/icon.svg' type='image/svg+xml')
+        
+        link(rel='stylesheet' href='/css/style.css')
+
+        title Guestbook
+
+    body
+        include /modules/header
+        main
+            form(action='/add_entry' method='post')
+                h2 Leave a message
+                label(for='name') Name
+                input(type='text' name='name' id='name' placeholder='Your name' required)
+                label(for='message') Message
+                textarea(name='message' id='message' placeholder='Your message' required)
+                button(type='submit') Add entry
+        main
+            section.entries__header
+                h2 Entries
+                section.pagination
+                    - page = Number(page)
+                    //- If the page is not 1, then there is a previous page
+                    if page !== 1
+                        a(href=`?page=${page-1}`) Previous
+                    else
+                        p Previous
+                    //- If "entries" does not contain an entry with the id "1" then there is another page
+                    if !entries.find(entry => entry.id === 1)
+                        a(href=`?page=${page+1}`) Next
+                    else
+                        p Next
+                    
+            section.entries
+                for entry, index in entries
+                    +entry(entry, index)
+        include /modules/footer

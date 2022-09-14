@@ -1,0 +1,109 @@
+/* The provided CSS is bare-bones on purpose.
+It is just a starting point for you to customize.
+You can use the CSS file to change the look of the site
+You can also use it to add your own CSS rules. */
+
+:root {
+    --body-bg: #f5f5f5;
+    --header-bg: #fff;
+    --header-border: 2px solid black;
+    --main-bg: #fff;
+    --main-border: 2px solid black;
+    --entry-bg: #ebe7b5;
+    --entry-border: 2px solid #ccc789;
+    --form-bg: #ebe7b5;
+    --form-border: 2px solid #ccc789;
+    --footer-bg: #fff;
+    --footer-border: 2px solid black;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--body-bg);
+    font-family: Arial, Helvetica, sans-serif;
+
+    max-width: 700px;
+    margin: 4px auto 0 auto;
+    padding: 0 4px;
+}
+
+header {
+    background-color: var(--header-bg);
+    border: var(--header-border);
+    text-align: center;
+    padding: 1rem;
+}
+
+main {
+    background-color: var(--main-bg);
+    border: var(--main-border);
+    padding: 0.5rem;
+    margin-top: 8px;
+}
+
+main form {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+    margin: 0 auto;
+    background-color: var(--form-bg);
+    border: var(--form-border);
+    padding: .25rem;
+}
+
+textarea {
+    resize: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+main form button[type="submit"] {
+    cursor: pointer;
+}
+
+section.entry {
+    background-color: var(--entry-bg);
+    border: var(--entry-border);
+    padding: 0.25rem;
+    /* Set position to relative so that the index can be positioned absolute */
+    position: relative;
+}
+
+section.entry:not(:first-child) {
+    margin-top: 8px;
+}
+
+section.entries__header {
+    display: flex;
+    justify-content: space-between;
+}
+
+section.pagination {
+    display: flex;
+    justify-content: space-between;
+}
+
+section.pagination *:not(:first-child) {
+    margin-left: 8px;
+}
+
+p.entry_index {
+    position: absolute;
+    right: 4px;
+    top: 0px;
+    opacity: 0.5;
+    user-select: none;
+}
+
+footer {
+    background-color: var(--footer-bg);
+    border: var(--footer-border);
+    text-align: center;
+    padding: 1rem;
+    margin-top: 8px;
+}
