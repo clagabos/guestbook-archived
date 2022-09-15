@@ -24,6 +24,9 @@ html(lang='en')
                 input(type='text' name='name' id='name' placeholder='Your name' required)
                 label(for='message') Message
                 textarea(name='message' id='message' placeholder='Your message' required)
+                label(for='captcha') CAPTCHA
+                input(type='text' name='captcha' id='captcha' placeholder='CAPTCHA' required)
+                img(src='/captcha' alt='CAPTCHA' onload="setTimeout(() => this.src = '/captcha?' + Date.now(), 10000);" draggable="false")
                 button(type='submit') Add entry
         main
             section.entries__header
@@ -35,8 +38,8 @@ html(lang='en')
                         a(href=`?page=${page-1}`) Previous
                     else
                         p Previous
-                    //- If "entries" does not contain an entry with the id "1" then there is another page
-                    if !entries.find(entry => entry.id === 1)
+                    //- If "entries" does not contain an entry with the id "first_entry" then there is another page
+                    if first_entry != undefined && !entries.find(entry => entry.id == first_entry)
                         a(href=`?page=${page+1}`) Next
                     else
                         p Next

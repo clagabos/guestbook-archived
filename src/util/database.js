@@ -4,7 +4,7 @@ import log from './log.js';
 async function init() {
     let connection = await getConnection(guestbookPool);
     // Create table "entries" if it does not exist
-    await query(`CREATE TABLE IF NOT EXISTS entries (id INT NOT NULL AUTO_INCREMENT, name VARCHAR(255) NOT NULL, message TEXT NOT NULL, date DATETIME NOT NULL, hidden BOOLEAN NOT NULL DEFAULT 0, PRIMARY KEY (id))`);
+    await query(`CREATE TABLE IF NOT EXISTS ${process.env.MYSQL_TABLE} (id INT NOT NULL AUTO_INCREMENT, name VARCHAR(255) NOT NULL, message TEXT NOT NULL, date DATETIME NOT NULL, hidden BOOLEAN NOT NULL DEFAULT 0, PRIMARY KEY (id))`);
     connection.release();
     log.info(`🗄️ Database initialized`);
 }

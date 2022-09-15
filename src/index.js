@@ -5,11 +5,13 @@ import https from 'https';
 import http from 'http';
 import cors from 'cors';
 import body_parser from 'body-parser';
+import session from 'express-session';
 import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import log from './util/log.js';
 import database from './util/database.js';
+import { login } from './util/bot.js';
 
 let config = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'config.json')));
 database.init();
@@ -35,6 +37,27 @@ app.locals.config = config;
 app.use(cors());
 app.use(body_parser.json({limit: "1mb", parameterLimit: 100000})); // Parse json requests
 app.use(body_parser.urlencoded({ extended: true, limit: "1mb", parameterLimit: 100000 })); // Parse urlencoded bodies
+// Session
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { 
+        secure: false,
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+    }
+}));
+
+// Middleware
+fs.readdirSync(path.join(process.cwd(), "src", "middleware")).forEach(async file => { 
+    if(file.endsWith(".js")) { 
+        let middleware = await import(`./middleware/${file}`);
+        middleware = middleware.default;
+
+        app.use(middleware.handler)
+    }
+})
 
 // Routes
 let routes = fs.readdirSync(path.join(process.cwd(), 'src/routes'));
@@ -52,22 +75,32 @@ routes.forEach(async file => {
 
     // Once all of the routes have been registered
     if(file == routes[routes.length - 1]) {
-        // Static files
-        app.use(express.static(path.join(process.cwd(), 'static')));
+        // Wait a second, just in case the route registration is slow
+        setTimeout(() => {
+            // Static files
+            app.use(express.static(path.join(process.cwd(), 'static')));
+    
+            // Listen for 404
+            app.use((req, res) => {
+                res.status(404).redirect("/");
+            });
+            log.info(`🔌 Registered route ${chalk.greenBright('404')}`);
+    
+            // Start server
+            server.on('listening', () => {
+                log.info(`🚀 Webserver listening on port ${process.env.PORT}`);
+            }).on('error', (err) => {
+                log.error(`❗ Server error on startup: ${err}`);
+            }).listen(process.env.PORT);
+    
+            // Start Discord Bot
+            login();
+        }, 1500);
 
-        // Listen for 404
-        app.use((req, res) => {
-            res.status(404).redirect("/");
-        });
-        log.info(`🔌 Registered route ${chalk.greenBright('404')}`);
-
-        // Start server
-        server.on('listening', () => {
-            log.info(`🚀 Webserver listening on port ${process.env.PORT}`);
-        }).on('error', (err) => {
-            log.error(`❗ Server error on startup: ${err}`);
-        }).listen(process.env.PORT);
     };
     
 });
 
+
+
+export default config;

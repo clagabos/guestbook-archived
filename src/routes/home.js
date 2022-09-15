@@ -10,12 +10,15 @@ const route = {
         // pages are 10 entries long, so get the first 10 entries on page 1, the next 10 on page 2, etc.
         let offset = (page - 1) * 10;
 
-        // get total number of pages
-        let total_pages = await database.query("SELECT COUNT(*) FROM entries");
-        total_pages = Math.ceil(total_pages[0]["COUNT(*)"] / 10);
+        // get the first entry in the table that is not hidden
+        let first_entry = await database.query(`SELECT * FROM ${process.env.MYSQL_TABLE} WHERE hidden = 0 ORDER BY id ASC LIMIT 1`);
 
-        database.query("SELECT * FROM entries ORDER BY date DESC LIMIT 10 OFFSET ?", [offset]).then(rows => {
-            res.status(200).render('pages/home', {entries: rows, page: page, total_pages: total_pages});
+
+        database.query(`SELECT * FROM ${process.env.MYSQL_TABLE} WHERE hidden = 0 ORDER BY date DESC LIMIT 10 OFFSET ?`, [offset]).then(rows => {
+            if(first_entry.length == 0) {
+                first_entry[0] = { id: undefined}
+            }
+            res.status(200).render('pages/home', {entries: rows, page: page, first_entry: first_entry[0].id});
         }).catch(err => {
             log.error(`❌ Error getting entries from database: ${err}`);
             res.status(500).send("Internal server error");
